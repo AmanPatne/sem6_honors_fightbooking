@@ -15,9 +15,13 @@ pipeline {
         stage('Build and Test') {
             steps {
                 script {
-                    def containerWorkspace = '/workspace' // Linux-style path inside container
-                    docker.image('amanpatne/flightbooking:latest').inside("-v ${env.WORKSPACE}:$containerWorkspace -v ${env.WORKSPACE}/.m2:/root/.m2 -w $containerWorkspace") {
-                        // Run Maven commands inside the container at /workspace
+                    // Convert Windows path (e.g. C:\Users\lenovo\workspace) to Linux style /c/Users/lenovo/workspace
+                    def workspace = env.WORKSPACE
+                    def containerWorkspace = workspace.replaceAll('\\\\', '/') // backslashes to forward slashes
+                                                      .replaceFirst('^([A-Za-z]):', '/$1') // drive letter C: -> /C
+                                                      .toLowerCase() // lowercase drive letter
+
+                    docker.image('amanpatne/flightbooking:latest').inside("-v ${workspace}:${containerWorkspace} -v ${workspace}/.m2:/root/.m2 -w ${containerWorkspace}") {
                         sh 'mvn clean package -DskipTests'
                         sh 'mvn test'
                     }
