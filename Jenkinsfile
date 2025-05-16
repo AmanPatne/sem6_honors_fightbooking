@@ -1,8 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.5-openjdk-17'  // Java + Maven in Docker
-        }
+    agent any
+
+    tools {
+        maven 'Maven 3.9.5'
+        jdk 'Java 17'
     }
 
     environment {
@@ -12,7 +13,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Clone the full repo
                 git 'https://github.com/AmanPatne/sem6_honors_fightbooking.git'
             }
         }
@@ -20,7 +20,7 @@ pipeline {
         stage('Build') {
             steps {
                 dir('Flightbooking') {
-                    sh 'mvn clean package -DskipTests'
+                    bat 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -28,7 +28,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir('Flightbooking') {
-                    sh 'mvn test'
+                    bat 'mvn test'
                 }
             }
         }
