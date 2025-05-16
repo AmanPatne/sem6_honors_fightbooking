@@ -15,11 +15,10 @@ pipeline {
         stage('Build and Test') {
             steps {
                 script {
-                    docker.image('amanpatne/flightbooking:latest').inside("-v ${env.WORKSPACE}/.m2:/root/.m2") {
-                        // Clean and package without tests
+                    def containerWorkspace = '/workspace' // Linux-style path inside container
+                    docker.image('amanpatne/flightbooking:latest').inside("-v ${env.WORKSPACE}:$containerWorkspace -v ${env.WORKSPACE}/.m2:/root/.m2 -w $containerWorkspace") {
+                        // Run Maven commands inside the container at /workspace
                         sh 'mvn clean package -DskipTests'
-
-                        // Run tests
                         sh 'mvn test'
                     }
                 }
