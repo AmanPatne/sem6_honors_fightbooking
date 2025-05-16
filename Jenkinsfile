@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     // Run commands inside your docker container and mount .m2 for caching
-                    docker.image('amanpatne/flightbooking:flightbooking').inside("-v ${env.WORKSPACE}/.m2:/root/.m2") {
+                    docker.image('amanpatne/flightbooking:latest').inside("-v ${env.WORKSPACE}/.m2:/root/.m2") {
                         // Build
                         sh 'mvn clean package -DskipTests'
                         // Test
