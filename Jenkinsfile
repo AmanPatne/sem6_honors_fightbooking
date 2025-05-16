@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run --rm -v ${pwd}:/app -w /app ${IMAGE} mvn clean package -DskipTests
+                    docker run --rm -v ${pwd()}:/app -w /app ${IMAGE} mvn clean package -DskipTests
                     """
                 }
             }
@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run --rm -v ${pwd}:/app -w /app ${IMAGE} mvn test
+                    docker run --rm -v ${pwd()}:/app -w /app ${IMAGE} mvn test
                     """
                 }
             }
