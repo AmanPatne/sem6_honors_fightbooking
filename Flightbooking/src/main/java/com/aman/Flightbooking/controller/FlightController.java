@@ -18,11 +18,10 @@ public class FlightController {
         this.flightService = flightService;
     }
 
-    // Get all flights and show them in an HTML table
     @GetMapping
     public String getAllFlights(Model model) {
         List<Flight> flights = flightService.getAllFlights();
-        model.addAttribute("flights", flights);  // Add the list of flights to the model
-        return "flights";  // Thymeleaf template for displaying flights
+        model.addAttribute("flights", flights); // sent to HTML page
+        return "flights"; // mapped to templates/flights.html
     }
 }
