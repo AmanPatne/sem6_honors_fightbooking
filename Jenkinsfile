@@ -15,15 +15,27 @@ pipeline {
         stage('Build and Test') {
             steps {
                 script {
-                    // Run commands inside your docker container and mount .m2 for caching
                     docker.image('amanpatne/flightbooking:latest').inside("-v ${env.WORKSPACE}/.m2:/root/.m2") {
-                        // Build
+                        // Clean and package without tests
                         sh 'mvn clean package -DskipTests'
-                        // Test
+
+                        // Run tests
                         sh 'mvn test'
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+        }
+        failure {
+            echo 'Build failed! Please check the logs.'
+        }
+        success {
+            echo 'Build and tests passed successfully!'
         }
     }
 }
