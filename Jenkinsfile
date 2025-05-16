@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.8.5-openjdk-17' // Official Maven + JDK 17 image
+            args '-v /root/.m2:/root/.m2' // Optional: use Maven cache
+        }
+    }
 
     environment {
         MAVEN_OPTS = "-Dmaven.repo.local=.m2/repository"
@@ -15,7 +20,7 @@ pipeline {
         stage('Build') {
             steps {
                 dir('Flightbooking') {
-                    bat 'mvn clean package -DskipTests'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -23,7 +28,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir('Flightbooking') {
-                    bat 'mvn test'
+                    sh 'mvn test'
                 }
             }
         }
