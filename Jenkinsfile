@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'maven:3.8.5-openjdk-17' // Official Maven + JDK 17 image
-            args '-v /root/.m2:/root/.m2' // Optional: use Maven cache
+            image 'maven:3.8.5-openjdk-17'
+            args '-v ${WORKSPACE}/.m2:/root/.m2' // Use local Maven cache
         }
     }
 
