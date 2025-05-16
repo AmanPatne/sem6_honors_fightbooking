@@ -1,30 +1,27 @@
 pipeline {
-    agent {
-        docker {
-            image 'amanpatne/flightbooking:flightbooking'
-            args "-v ${env.WORKSPACE.replaceAll('\\\\','/') }:/workspace -w /workspace -v ${env.WORKSPACE.replaceAll('\\\\','/')}/.m2:/root/.m2"
-        }
-    }
+    agent any
+
     environment {
         MAVEN_OPTS = "-Dmaven.repo.local=.m2/repository"
     }
+
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/AmanPatne/sem6_honors_fightbooking.git'
             }
         }
-        stage('Build') {
+
+        stage('Build and Test') {
             steps {
-                dir('Flightbooking') {
-                    sh 'mvn clean package -DskipTests'
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                dir('Flightbooking') {
-                    sh 'mvn test'
+                script {
+                    // Run commands inside your docker container and mount .m2 for caching
+                    docker.image('amanpatne/flightbooking:flightbooking').inside("-v ${env.WORKSPACE}/.m2:/root/.m2") {
+                        // Build
+                        sh 'mvn clean package -DskipTests'
+                        // Test
+                        sh 'mvn test'
+                    }
                 }
             }
         }
